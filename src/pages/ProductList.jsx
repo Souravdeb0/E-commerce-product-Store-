@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import { Loader2 } from 'lucide-react';
 
@@ -7,6 +8,8 @@ function ProductList() {
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('search') || '';
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -29,9 +32,15 @@ function ProductList() {
     fetchProducts();
   }, []);
 
-  const filteredProducts = activeCategory === 'all' 
+  let filteredProducts = activeCategory === 'all' 
     ? products 
     : products.filter(p => p.category === activeCategory);
+
+  if (searchQuery) {
+    filteredProducts = filteredProducts.filter(p => 
+      p.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }
 
   if (loading) {
     return (
@@ -45,8 +54,12 @@ function ProductList() {
   return (
     <div className="page-container">
       <div className="page-header">
-        <h1 className="page-title">Discover Our Collection</h1>
-        <p className="page-subtitle">Premium quality products curated just for you.</p>
+        <h1 className="page-title">
+          {searchQuery ? `Results for "${searchQuery}"` : 'Discover Our Collection'}
+        </h1>
+        <p className="page-subtitle">
+          {searchQuery ? `Showing matching products` : 'Premium quality products curated just for you.'}
+        </p>
       </div>
 
       <div className="filter-container">

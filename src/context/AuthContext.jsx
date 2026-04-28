@@ -1,54 +1,49 @@
 import React, { createContext, useState, useEffect } from 'react';
+import { 
+  onAuthStateChanged, 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  updateProfile, 
+  signOut 
+} from 'firebase/auth';
+import { auth } from '../firebase';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Initialize from localStorage if available (simulated persistence)
   useEffect(() => {
-    const storedUser = localStorage.getItem('lumiStore_user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error("Failed to parse user from local storage", e);
-      }
-    }
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+    return () => unsubscribe();
   }, []);
 
-  const login = (email, password) => {
-    // Simulated login logic
-    const mockUser = {
-      id: 'usr_' + Date.now(),
-      name: email.split('@')[0], // derived mock name
-      email,
-    };
-    setUser(mockUser);
-    localStorage.setItem('lumiStore_user', JSON.stringify(mockUser));
-    return true;
+  const login = async (email, password) => {
+    return signInWithEmailAndPassword(auth, email, password);
   };
 
-  const register = (name, email, password) => {
-    // Simulated registration logic
-    const newUser = {
-      id: 'usr_' + Date.now(),
-      name,
-      email,
-    };
-    setUser(newUser);
-    localStorage.setItem('lumiStore_user', JSON.stringify(newUser));
-    return true;
+  const register = async (name, email, password) => {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    // Update the display name right after creation
+    await updateProfile(userCredential.user, {
+      displayName: name
+    });
+    // Force a local state update so the name appears immediately
+    setUser({ ...userCredential.user, displayName: name });
+    return userCredential;
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('lumiStore_user');
+  const logout = async () => {
+    return signOut(auth);
   };
 
   return (
     <AuthContext.Provider value={{ user, login, register, logout }}>
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

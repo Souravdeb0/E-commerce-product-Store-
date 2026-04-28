@@ -7,14 +7,24 @@ import { AuthContext } from '../context/AuthContext';
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     if (email && password) {
-      login(email, password);
-      navigate('/profile');
+      try {
+        setIsLoading(true);
+        await login(email, password);
+        navigate('/profile');
+      } catch (err) {
+        setError('Failed to log in: ' + err.message);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -26,6 +36,8 @@ function Login() {
           <h1>Welcome Back</h1>
           <p className="page-subtitle">Please enter your details to sign in</p>
         </div>
+
+        {error && <div style={{ color: '#ef4444', backgroundColor: '#fee2e2', padding: '0.75rem', borderRadius: '0.5rem', marginBottom: '1.5rem', fontSize: '0.9rem', textAlign: 'center' }}>{error}</div>}
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="form-group">
@@ -54,8 +66,8 @@ function Login() {
             />
           </div>
 
-          <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '1rem' }}>
-            Sign In
+          <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '1rem' }} disabled={isLoading}>
+            {isLoading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
 

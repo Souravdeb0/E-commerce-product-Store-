@@ -8,14 +8,24 @@ function Register() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { register } = useContext(AuthContext);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     if (name && email && password) {
-      register(name, email, password);
-      navigate('/profile');
+      try {
+        setIsLoading(true);
+        await register(name, email, password);
+        navigate('/profile');
+      } catch (err) {
+        setError('Failed to create an account: ' + err.message);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -27,6 +37,8 @@ function Register() {
           <h1>Create an Account</h1>
           <p className="page-subtitle">Please fill in the details below to sign up</p>
         </div>
+
+        {error && <div style={{ color: '#ef4444', backgroundColor: '#fee2e2', padding: '0.75rem', borderRadius: '0.5rem', marginBottom: '1.5rem', fontSize: '0.9rem', textAlign: 'center' }}>{error}</div>}
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="form-group">
@@ -66,8 +78,8 @@ function Register() {
             />
           </div>
 
-          <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '1rem' }}>
-            Sign Up
+          <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '1rem' }} disabled={isLoading}>
+            {isLoading ? 'Signing Up...' : 'Sign Up'}
           </button>
         </form>
 

@@ -58,7 +58,7 @@ function CartDrawer() {
                   </div>
                   <div className="item-details">
                     <h4 className="item-title">{item.title}</h4>
-                    <p className="item-price">${item.price.toFixed(2)}</p>
+                    <p className="item-price">₹{item.price.toFixed(2)}</p>
                     
                     <div className="item-actions">
                       <div className="quantity-controls">
@@ -98,7 +98,7 @@ function CartDrawer() {
           <div className="cart-footer">
             <div className="cart-total">
               <span>Subtotal</span>
-              <span>${totalAmount.toFixed(2)}</span>
+              <span>₹{totalAmount.toFixed(2)}</span>
             </div>
             <p className="tax-note">Shipping and taxes calculated at checkout.</p>
             <button 

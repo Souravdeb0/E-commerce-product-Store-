@@ -9,9 +9,13 @@ function Profile() {
   const navigate = useNavigate();
   const { user, logout } = useContext(AuthContext);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (e) {
+      console.error("Failed to log out", e);
+    }
   };
 
   const getInitials = (name) => {
@@ -95,8 +99,8 @@ function Profile() {
       <div className="profile-layout">
         <aside className="profile-sidebar">
           <div className="profile-user-info">
-            <div className="profile-avatar">{getInitials(user?.name)}</div>
-            <h2 style={{ fontSize: '1.25rem', marginBottom: '0.25rem' }}>{user?.name || 'User'}</h2>
+            <div className="profile-avatar">{getInitials(user?.displayName)}</div>
+            <h2 style={{ fontSize: '1.25rem', marginBottom: '0.25rem' }}>{user?.displayName || 'User'}</h2>
             <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>{user?.email || 'user@example.com'}</p>
           </div>
 

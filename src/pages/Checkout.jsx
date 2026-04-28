@@ -102,7 +102,7 @@ function Checkout() {
             </section>
 
             <button type="submit" className="btn-primary" style={{ width: '100%', padding: '1.25rem', fontSize: '1.1rem' }}>
-              <ShieldCheck size={20} /> Pay ${grandTotal.toFixed(2)}
+              <ShieldCheck size={20} /> Pay ₹{grandTotal.toFixed(2)}
             </button>
           </form>
         </div>
@@ -119,7 +119,7 @@ function Checkout() {
                       {item.title}
                     </div>
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                      Qty: {item.quantity} × ${item.price}
+                      Qty: {item.quantity} × ₹{item.price}
                     </div>
                   </div>
                 </div>
@@ -128,20 +128,20 @@ function Checkout() {
             
             <div className="summary-row">
               <span>Subtotal</span>
-              <span>${total.toFixed(2)}</span>
+              <span>₹{total.toFixed(2)}</span>
             </div>
             <div className="summary-row">
               <span>Shipping</span>
-              <span>{shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}</span>
+              <span>{shipping === 0 ? 'FREE' : `₹${shipping.toFixed(2)}`}</span>
             </div>
             <div className="summary-row">
               <span>Estimated Tax</span>
-              <span>${tax.toFixed(2)}</span>
+              <span>₹{tax.toFixed(2)}</span>
             </div>
             
             <div className="summary-total">
               <span>Total</span>
-              <span>${grandTotal.toFixed(2)}</span>
+              <span>₹{grandTotal.toFixed(2)}</span>
             </div>
 
             <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '1.5rem', textAlign: 'center' }}>
